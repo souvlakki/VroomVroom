@@ -1,0 +1,57 @@
+Mandatory rules:
+- Work only inside C:\Projects\VroomVroom unless told otherwise.
+- Do not use Google Maps.
+- Use OpenStreetMap, MapLibre, and Supabase Realtime for maps/GPS features.
+- Do not invent features outside this chapter.
+- Do not modify unrelated code.
+- Do not remove working functionality.
+- Use TypeScript strict typing.
+- Include loading, empty, and error states.
+- Do not expose secrets or service role keys in frontend code.
+- Respect Supabase Row Level Security.
+
+Task: Create the Vroom Vroom frontend foundation only.
+
+Location:
+C:\Projects\VroomVroom\frontend
+
+Use:
+- React
+- Vite
+- TypeScript
+- Tailwind CSS
+- TanStack Query
+- Zustand
+- @supabase/supabase-js
+
+Create folders:
+- src/components
+- src/components/ui
+- src/features
+- src/features/auth
+- src/features/organizations
+- src/features/teams
+- src/features/children
+- src/features/events
+- src/features/transportation
+- src/features/gps
+- src/features/messaging
+- src/features/notifications
+- src/features/safety
+- src/features/admin
+- src/lib
+- src/services
+- src/stores
+- src/types
+- src/utils
+
+Create:
+- src/lib/supabaseClient.ts reading VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+- basic App.tsx
+- basic routing/navigation shell
+- .env.example
+
+Do not build authentication logic yet.
+Do not build database migrations.
+Do not build GPS yet.
+The app must run with npm install and npm run dev.

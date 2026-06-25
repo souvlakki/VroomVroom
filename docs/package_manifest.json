@@ -1,0 +1,6 @@
+{
+  "version": "V3 v1.3",
+  "mvp_includes_live_gps": "Automatic GPS tracking starts when ride assignment becomes active",
+  "extract_to": "C:\\Projects\\VroomVroom\\docs",
+  "start_file": "docs/00_CHATGPT_Start_Here.docx"
+}

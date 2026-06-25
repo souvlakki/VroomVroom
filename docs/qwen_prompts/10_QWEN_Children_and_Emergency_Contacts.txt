@@ -1,0 +1,33 @@
+Mandatory rules:
+- Work only inside C:\Projects\VroomVroom unless told otherwise.
+- Do not use Google Maps.
+- Use OpenStreetMap, MapLibre, and Supabase Realtime for maps/GPS features.
+- Do not invent features outside this chapter.
+- Do not modify unrelated code.
+- Do not remove working functionality.
+- Use TypeScript strict typing.
+- Include loading, empty, and error states.
+- Do not expose secrets or service role keys in frontend code.
+- Respect Supabase Row Level Security.
+
+Task: Build children and emergency contact management only.
+
+Use tables:
+- children
+- emergency_contacts
+- child_team_memberships
+
+Create:
+- ChildrenListPage
+- AddChildForm
+- EditChildForm
+- ChildDetailPage
+- EmergencyContactsPanel
+- AddEmergencyContactForm
+
+Rules:
+- Parent can only manage own children.
+- Emergency contacts require name, relationship, and phone number.
+- Validate required fields.
+- Use friendly empty states.
+- Do not build events, transportation, GPS, messaging, or reports.

@@ -1,0 +1,35 @@
+Mandatory rules:
+- Work only inside C:\Projects\VroomVroom unless told otherwise.
+- Do not use Google Maps.
+- Use OpenStreetMap, MapLibre, and Supabase Realtime for maps/GPS features.
+- Do not invent features outside this chapter.
+- Do not modify unrelated code.
+- Do not remove working functionality.
+- Use TypeScript strict typing.
+- Include loading, empty, and error states.
+- Do not expose secrets or service role keys in frontend code.
+- Respect Supabase Row Level Security.
+
+Task: Build organizations and teams only.
+
+Use tables:
+- organizations
+- organization_members
+- teams
+- team_members
+
+Create screens:
+- OrganizationsListPage
+- CreateOrganizationPage
+- OrganizationDetailPage
+- TeamsListPage
+- CreateTeamPage
+- TeamDetailPage
+
+Rules:
+- Current user can create organization.
+- Creator must be inserted into organization_members as admin.
+- Organization admin can create teams.
+- Creator/team admin should be inserted into team_members.
+- Use loading, error, and empty states.
+- Do not build children, events, transportation, GPS, messaging, or reports.

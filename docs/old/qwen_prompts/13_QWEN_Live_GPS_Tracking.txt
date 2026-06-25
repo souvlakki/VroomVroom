@@ -1,0 +1,50 @@
+Mandatory rules:
+- Work only inside C:\Projects\VroomVroom unless told otherwise.
+- Do not use Google Maps.
+- Use OpenStreetMap, MapLibre, and Supabase Realtime for maps/GPS features.
+- Do not invent features outside this chapter.
+- Do not modify unrelated code.
+- Do not remove working functionality.
+- Use TypeScript strict typing.
+- Include loading, empty, and error states.
+- Do not expose secrets or service role keys in frontend code.
+- Respect Supabase Row Level Security.
+
+Task: Build Live GPS Tracking for active ride assignments.
+
+Official MVP decision:
+Location sharing starts automatically when a ride assignment becomes active.
+The driver does not manually opt in for MVP v1.3.
+Tracking automatically stops when assignment_status is completed, cancelled, or expired.
+
+Use:
+- Browser Geolocation API
+- Supabase Realtime
+- MapLibre
+- OpenStreetMap or OpenFreeMap basemap
+- driver_locations table
+- ride_assignments.gps_tracking_active
+
+Create:
+- src/features/gps/GpsLocationPublisher.tsx for drivers
+- src/features/gps/LiveDriverMap.tsx for parents
+- src/features/gps/gpsService.ts
+- src/features/gps/useLiveDriverLocation.ts
+- map component with driver marker
+
+Rules:
+- Only publish location if current user is the assigned driver.
+- Only publish if gps_tracking_active is true.
+- Publish location every 15-30 seconds while active.
+- Parent can view location only for their own active assignment.
+- Stop publishing when assignment is completed, cancelled, or expired.
+- Show a clear message if browser location permission is denied.
+- Do not use Google Maps.
+- Do not build turn-by-turn navigation.
+- Do not build route optimization.
+
+Acceptance:
+- Driver location rows appear in driver_locations.
+- Parent sees driver marker update on map.
+- Unauthorized user cannot view unrelated GPS data.
+- Tracking stops on completed/cancelled/expired status.

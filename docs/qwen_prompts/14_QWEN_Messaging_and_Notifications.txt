@@ -1,0 +1,33 @@
+Mandatory rules:
+- Work only inside C:\Projects\VroomVroom unless told otherwise.
+- Do not use Google Maps.
+- Use OpenStreetMap, MapLibre, and Supabase Realtime for maps/GPS features.
+- Do not invent features outside this chapter.
+- Do not modify unrelated code.
+- Do not remove working functionality.
+- Use TypeScript strict typing.
+- Include loading, empty, and error states.
+- Do not expose secrets or service role keys in frontend code.
+- Respect Supabase Row Level Security.
+
+Task: Build basic messaging and notifications.
+
+Use tables:
+- conversations
+- conversation_participants
+- messages
+- notifications
+
+Create:
+- ConversationsListPage
+- ConversationDetailPage
+- MessageComposer
+- NotificationsPage
+- MarkNotificationRead action
+
+Rules:
+- Only participants can see conversation messages.
+- Create ride conversation when ride assignment is accepted/created.
+- Create in-app notifications for assignment confirmed, driver en route, driver arrived, passenger boarded, ride completed, and new message.
+- Email delivery can be documented as future work; do not fake it.
+- Do not build reports or admin beyond required notification display.

@@ -1,0 +1,33 @@
+Mandatory rules:
+- Work only inside C:\Projects\VroomVroom unless told otherwise.
+- Do not use Google Maps.
+- Use OpenStreetMap, MapLibre, and Supabase Realtime for maps/GPS features.
+- Do not invent features outside this chapter.
+- Do not modify unrelated code.
+- Do not remove working functionality.
+- Use TypeScript strict typing.
+- Include loading, empty, and error states.
+- Do not expose secrets or service role keys in frontend code.
+- Respect Supabase Row Level Security.
+
+Task: Build events and attendance only.
+
+Use tables:
+- events
+- attendance_responses
+- children
+- teams
+
+Create:
+- EventsListPage
+- CreateEventForm
+- EventDetailPage
+- AttendanceCard per child
+
+Rules:
+- Events belong to teams.
+- Attendance is one row per event and child.
+- Use upsert on event_id + child_id.
+- Parent can mark child as attending, not_attending, needs_ride, or driving.
+- Do not create ride requests yet.
+- Do not build GPS yet.

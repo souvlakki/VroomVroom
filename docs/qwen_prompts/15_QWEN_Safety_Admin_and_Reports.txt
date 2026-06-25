@@ -1,0 +1,38 @@
+Mandatory rules:
+- Work only inside C:\Projects\VroomVroom unless told otherwise.
+- Do not use Google Maps.
+- Use OpenStreetMap, MapLibre, and Supabase Realtime for maps/GPS features.
+- Do not invent features outside this chapter.
+- Do not modify unrelated code.
+- Do not remove working functionality.
+- Use TypeScript strict typing.
+- Include loading, empty, and error states.
+- Do not expose secrets or service role keys in frontend code.
+- Respect Supabase Row Level Security.
+
+Task: Build safety reports, basic admin dashboard, and MVP reports.
+
+Use tables:
+- safety_reports
+- audit_logs
+- ratings
+- ride_assignments
+- events
+- attendance_responses
+- driver_locations where helpful for GPS availability reporting
+
+Create:
+- SafetyReportForm
+- MySafetyReportsPage
+- AdminSafetyReportsPage
+- AdminDashboardPage
+- TransportationReadinessReport
+- OpenIncidentsReport
+- GpsTrackingAvailabilityReport
+
+Rules:
+- Normal users can create safety reports.
+- Normal users can only see their own safety reports.
+- Admin users can review safety reports within their organization.
+- Critical reports must show clear red/high priority styling.
+- Do not build enterprise analytics or AI.

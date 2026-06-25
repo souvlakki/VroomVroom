@@ -1,0 +1,38 @@
+Mandatory rules:
+- Work only inside C:\Projects\VroomVroom unless told otherwise.
+- Do not use Google Maps.
+- Use OpenStreetMap, MapLibre, and Supabase Realtime for maps/GPS features.
+- Do not invent features outside this chapter.
+- Do not modify unrelated code.
+- Do not remove working functionality.
+- Use TypeScript strict typing.
+- Include loading, empty, and error states.
+- Do not expose secrets or service role keys in frontend code.
+- Respect Supabase Row Level Security.
+
+Task: Build authentication and user profile management only.
+
+Use Supabase Auth and user_profiles table.
+
+Create:
+- Register page
+- Login page
+- Logout action
+- Forgot password page
+- Profile page
+- Protected route wrapper
+- Auth store using Zustand
+- Auth service using Supabase client
+
+Rules:
+- After signup, create user_profiles row.
+- role defaults to parent unless selected.
+- Show friendly errors.
+- Do not expose raw database errors to end users.
+- Do not build organizations, teams, children, events, transportation, GPS, messaging, or reports.
+
+Acceptance:
+- User can register.
+- User can login.
+- User can logout.
+- User can view profile.

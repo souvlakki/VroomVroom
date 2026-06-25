@@ -1,0 +1,40 @@
+Mandatory rules:
+- Work only inside C:\Projects\VroomVroom unless told otherwise.
+- Do not use Google Maps.
+- Use OpenStreetMap, MapLibre, and Supabase Realtime for maps/GPS features.
+- Do not invent features outside this chapter.
+- Do not modify unrelated code.
+- Do not remove working functionality.
+- Use TypeScript strict typing.
+- Include loading, empty, and error states.
+- Do not expose secrets or service role keys in frontend code.
+- Respect Supabase Row Level Security.
+
+Task: Build the transportation MVP.
+
+Use tables:
+- ride_requests
+- ride_offers
+- ride_assignments
+- vehicles
+- attendance_responses
+
+Create:
+- Ride request creation from event/attendance
+- Ride requests list
+- Vehicle management
+- Driver offer flow
+- Parent offer review
+- Accept offer flow
+- Assignment detail
+- Pickup verification screen
+- Ride status updates
+
+Rules:
+- Parent must own the child.
+- Driver must own the vehicle.
+- Capacity must not be exceeded.
+- Pickup code is required before boarded status.
+- When an assignment becomes active/confirmed, set gps_tracking_active = true and gps_tracking_started_at = now(). This enables automatic GPS tracking in the next chapter.
+- When assignment becomes completed, cancelled, or expired, set gps_tracking_active = false and gps_tracking_stopped_at = now().
+- Do not build maps or GPS marker UI yet.
