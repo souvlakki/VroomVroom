@@ -13,10 +13,9 @@ export const signUp = async (email: string, password: string, role: 'parent' | '
     if (authError) throw authError;
 
     if (data.user) {
-      const { data: profile, error: profileError } = await supabase
+      const { error: profileError } = await supabase
         .from('user_profiles')
-        .insert([{ user_id: data.user.id, role }])
-        .select();
+        .insert([{ user_id: data.user.id, role }]);
 
       if (profileError) throw profileError;
     }

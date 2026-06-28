@@ -1,6 +1,15 @@
-import { useState } from 'react';
-import { supabaseClient } from '@supabase/auth-helpers-react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { type FormEvent, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
+
+type Team = {
+  id: number;
+  name: string;
+  org_id: number;
+};
+
+const getErrorMessage = (err: unknown): string =>
+  err instanceof Error ? err.message : 'An unknown error occurred.';
 
 const CreateTeamPage = () => {
   const { orgId } = useParams<{ orgId: string }>();
@@ -9,23 +18,66 @@ const CreateTeamPage = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const organizationId = Number(orgId);
+    const trimmedName = name.trim();
+
+    if (!orgId || Number.isNaN(organizationId)) {
+      setError('Invalid organization ID.');
+      return;
+    }
+
+    if (!trimmedName) {
+      setError('Team name is required.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const { data, error } = await supabaseClient
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        throw userError;
+      }
+
+      if (!user) {
+        throw new Error('User not authenticated.');
+      }
+
+      const { data: team, error: teamError } = await supabase
         .from('teams')
-        .insert([{ name, org_id: parseInt(orgId) }])
-        .select();
+        .insert([{ name: trimmedName, org_id: organizationId }])
+        .select('id, name, org_id')
+        .single<Team>();
 
-      if (error) throw error;
+      if (teamError) {
+        throw teamError;
+      }
 
-      // Redirect or show success message
-      navigate(`/organizations/${orgId}/teams`);
+      const { error: membershipError } = await supabase
+        .from('team_members')
+        .insert([
+          {
+            user_id: user.id,
+            team_id: team.id,
+            role: 'admin',
+          },
+        ]);
+
+      if (membershipError) {
+        throw membershipError;
+      }
+
+      navigate(`/organizations/${organizationId}/teams/${team.id}`);
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -35,14 +87,19 @@ const CreateTeamPage = () => {
     <form onSubmit={handleSubmit}>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
+
       <input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Team Name"
         required
+        disabled={loading}
       />
-      <button type="submit">Create Team</button>
+
+      <button type="submit" disabled={loading}>
+        {loading ? 'Creating...' : 'Create Team'}
+      </button>
     </form>
   );
 };

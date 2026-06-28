@@ -1,40 +1,75 @@
-import { useState } from 'react';
-import { supabaseClient } from '@supabase/auth-helpers-react';
+import { type FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
+
+type Organization = {
+  id: number;
+  name: string;
+};
+
+const getErrorMessage = (err: unknown): string =>
+  err instanceof Error ? err.message : 'An unknown error occurred.';
 
 const CreateOrganizationPage = () => {
   const [name, setName] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const trimmedName = name.trim();
+
+    if (!trimmedName) {
+      setError('Organization name is required.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const { user } = await supabaseClient.auth.user();
-      if (!user) throw new Error('User not authenticated');
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-      const { data, error } = await supabaseClient
+      if (userError) {
+        throw userError;
+      }
+
+      if (!user) {
+        throw new Error('User not authenticated.');
+      }
+
+      const { data: organization, error: organizationError } = await supabase
         .from('organizations')
-        .insert([{ name }])
-        .select();
+        .insert([{ name: trimmedName }])
+        .select('id, name')
+        .single<Organization>();
 
-      if (error) throw error;
+      if (organizationError) {
+        throw organizationError;
+      }
 
-      await supabaseClient
+      const { error: membershipError } = await supabase
         .from('organization_members')
         .insert([
           {
             user_id: user.id,
-            org_id: data[0].id,
+            org_id: organization.id,
             role: 'admin',
           },
         ]);
 
-      // Redirect or show success message
+      if (membershipError) {
+        throw membershipError;
+      }
+
+      navigate(`/organizations/${organization.id}`);
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -44,14 +79,19 @@ const CreateOrganizationPage = () => {
     <form onSubmit={handleSubmit}>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
+
       <input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Organization Name"
         required
+        disabled={loading}
       />
-      <button type="submit">Create Organization</button>
+
+      <button type="submit" disabled={loading}>
+        {loading ? 'Creating...' : 'Create Organization'}
+      </button>
     </form>
   );
 };
