@@ -3,26 +3,37 @@
 import type { AuthError } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabaseClient';
 
-export const signUp = async (email: string, password: string, role: 'parent' | 'child') => {
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error) return error.message;
+  return fallback;
+};
+
+export const signUp = async (
+  email: string,
+  password: string,
+  role: 'parent' | 'child',
+  captchaToken: string
+) => {
   try {
-    const { data, error: authError } = await supabase.auth.signUp({
+    const { error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        captchaToken,
+        data: {
+          role,
+        },
+      },
     });
 
     if (authError) throw authError;
 
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert([{ user_id: data.user.id, role }]);
-
-      if (profileError) throw profileError;
-    }
-
     return { success: true };
   } catch (error) {
-    return { success: false, error: (error as AuthError).message };
+    return {
+      success: false,
+      error: getErrorMessage(error as AuthError, 'Signup failed'),
+    };
   }
 };
 
@@ -37,7 +48,30 @@ export const signIn = async (email: string, password: string) => {
 
     return { success: true, user: data.user, session: data.session };
   } catch (error) {
-    return { success: false, error: (error as AuthError).message };
+    return {
+      success: false,
+      error: getErrorMessage(error as AuthError, 'Sign in failed'),
+    };
+  }
+};
+
+export const signInWithGoogle = async () => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/profile`,
+      },
+    });
+
+    if (error) throw error;
+
+    return { success: true, data };
+  } catch (error) {
+    return {
+      success: false,
+      error: getErrorMessage(error, 'Google sign-in failed'),
+    };
   }
 };
 
@@ -49,7 +83,10 @@ export const signOut = async () => {
 
     return { success: true };
   } catch (error) {
-    return { success: false, error: (error as AuthError).message };
+    return {
+      success: false,
+      error: getErrorMessage(error as AuthError, 'Sign out failed'),
+    };
   }
 };
 
@@ -61,6 +98,9 @@ export const forgotPassword = async (email: string) => {
 
     return { success: true, data };
   } catch (error) {
-    return { success: false, error: (error as AuthError).message };
+    return {
+      success: false,
+      error: getErrorMessage(error as AuthError, 'Password reset failed'),
+    };
   }
 };
