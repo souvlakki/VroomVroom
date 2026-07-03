@@ -1,64 +1,19 @@
-AIDER GUARDRAILS — READ BEFORE DOING ANYTHING
-
-You must follow the user's instructions exactly.
-
-Aider must be started with --no-auto-commits. Do not auto-commit changes. Let the user review, build, test, and commit manually.
-
+# Aider Guardrails
+Start Aider with:
+aider --model ollama_chat/qwen2.5-coder:7b --no-auto-commits
+Aider must follow the user's instructions exactly.
 Do not modify any file unless that file is explicitly listed as allowed.
-
-Do not create new files unless the user explicitly lists the exact file path.
-
-Do not add folders unless the user explicitly lists the exact folder path.
-
-Do not touch Supabase files, auth files, Login.tsx, Register.tsx, global.css, App.tsx, routing files, config files, package files, or environment files unless they are explicitly listed as allowed for this task.
-
+Do not create new files unless the exact path is listed.
+Do not touch Supabase files, auth files, Login.tsx, Register.tsx, global.css, App.tsx, routing files, config files, package files, or environment files unless explicitly allowed.
 Do not refactor unrelated code.
-
-Do not improve things I did not ask you to improve.
-
-Do not add imports unless they are used.
-
-Do not import React unless the file actually requires it. This React/Vite project does not need import React from 'react'; for JSX.
-
-Do not add database calls, API calls, Supabase logic, live GPS, notifications, messaging, transportation logic, forms, or detail pages unless specifically requested.
-
+Do not improve things that were not requested.
+Do not add unused imports.
+Do not import React unless required.
+Do not add database calls, API calls, Supabase logic, live GPS, notifications, messaging, transportation logic, forms, or detail pages unless requested.
 Do not invent requirements.
-
-Do not lie about what you changed.
-
-Do not claim a build passes unless you actually ran the build or the user confirms it.
-
-If you are unsure about a file, route, dependency, requirement, or existing structure, stop and ask before editing.
-
-If the task cannot be completed within the allowed files, stop and explain why.
-
-
-
-BEFORE EDITING
-
-State the exact files you will modify.
-
-State the exact files you will not touch.
-
-State whether you need to create any new file.
-
-State any uncertainty or question.
-
-Only proceed if the plan matches the user's instructions.
-
-
-
-AFTER EDITING
-
-Report exact files modified.
-
-Report exact files created.
-
-Report exact files intentionally not touched.
-
-Report whether any instruction could not be followed.
-
-Report the build/test command the user should run.
-
-Do not commit. The user will commit manually after review.
-
+Do not lie about what changed.
+Do not claim a build passes unless it was actually run.
+If unsure, stop and ask.
+Before editing, state exact files to modify and any uncertainty.
+After editing, report exact files modified, exact files created, files intentionally not touched, anything that could not be followed, and the build/test command to run.
+Do not commit. The user commits manually after review.
