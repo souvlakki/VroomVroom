@@ -1,7 +1,7 @@
 // src/components/Auth/Register.tsx
 
 import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 
 type TurnstileRenderOptions = {
@@ -86,20 +86,21 @@ const EyeIcon = ({ visible }: { visible: boolean }) => (
   </svg>
 );
 
-const passwordFieldStyle = {
-  position: 'relative',
+const passwordRowStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
   width: '100%',
 } as const;
 
 const passwordInputStyle = {
-  paddingRight: '3rem',
+  flex: 1,
+  minWidth: 0,
 } as const;
 
 const passwordToggleStyle = {
-  position: 'absolute',
-  right: '0.75rem',
-  top: '50%',
-  transform: 'translateY(-50%)',
+  width: '42px',
+  height: '42px',
   border: 'none',
   background: 'transparent',
   color: '#555',
@@ -108,6 +109,7 @@ const passwordToggleStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   padding: 0,
+  flex: '0 0 auto',
 } as const;
 
 const captchaContainerStyle = {
@@ -126,9 +128,10 @@ const passwordRulesStyle = {
   fontSize: '0.9rem',
 } as const;
 
-const passwordRuleStyle = (valid: boolean) =>
+const passwordRuleStyle = (valid: boolean, highlightMissing: boolean) =>
   ({
-    color: valid ? '#16794c' : '#555',
+    color: valid ? '#000000' : highlightMissing ? '#b42318' : '#555',
+    fontWeight: valid || highlightMissing ? 700 : 400,
     margin: '0.25rem 0',
   }) as const;
 
@@ -139,24 +142,21 @@ const helperTextStyle = {
   lineHeight: 1.4,
 } as const;
 
-const generatePasswordButtonStyle = {
-  width: '100%',
-  height: '38px',
-  borderRadius: '8px',
-  border: '1px solid #4361ee',
-  background: '#ffffff',
-  color: '#4361ee',
-  fontWeight: 600,
-  cursor: 'pointer',
-  transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-} as const;
-
 const passwordMatchStyle = (valid: boolean) =>
   ({
-    color: valid ? '#16794c' : '#b42318',
+    color: valid ? '#000000' : '#b42318',
+    fontWeight: 700,
     fontSize: '0.9rem',
     margin: '-0.35rem 0 0.5rem',
   }) as const;
+
+const successMessageStyle = {
+  color: '#16794c',
+  fontSize: '0.9rem',
+  fontWeight: 700,
+  margin: '0.35rem 0 0',
+  lineHeight: 1.4,
+} as const;
 
 const generateStrongPasswordValue = () => {
   const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -182,7 +182,6 @@ const generateStrongPasswordValue = () => {
 };
 
 const Register = () => {
-  const navigate = useNavigate();
   const { signUp, loading, error } = useAuthStore();
 
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
@@ -198,6 +197,8 @@ const Register = () => {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [passwordGeneratedMessage, setPasswordGeneratedMessage] = useState<string | null>(null);
+  const [signupSuccessMessage, setSignupSuccessMessage] = useState<string | null>(null);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const passwordRules = useMemo(
     () => ({
@@ -212,7 +213,6 @@ const Register = () => {
 
   const passwordMeetsRequirements = Object.values(passwordRules).every(Boolean);
   const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword;
-  const formReady = passwordMeetsRequirements && passwordsMatch && Boolean(captchaToken);
 
   useEffect(() => {
     if (!turnstileSiteKey) {
@@ -284,6 +284,9 @@ const Register = () => {
     setConfirmPassword(generatedPassword);
     setShowPassword(true);
     setShowConfirmPassword(true);
+    setSubmitAttempted(false);
+    setFormError(null);
+    setSignupSuccessMessage(null);
     setPasswordGeneratedMessage(
       'Strong password generated. Your browser or password manager will usually offer to save it securely.'
     );
@@ -306,7 +309,9 @@ const Register = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitAttempted(true);
     setFormError(null);
+    setSignupSuccessMessage(null);
 
     if (!passwordMeetsRequirements) {
       setFormError('Password does not meet the security requirements.');
@@ -327,7 +332,14 @@ const Register = () => {
 
     const latestError = useAuthStore.getState().error;
     if (!latestError) {
-      navigate('/login');
+      setSignupSuccessMessage('Check your email for the confirmation link before signing in.');
+      setPassword('');
+      setConfirmPassword('');
+      setShowPassword(false);
+      setShowConfirmPassword(false);
+      setPasswordGeneratedMessage(null);
+      setSubmitAttempted(false);
+      resetCaptcha();
       return;
     }
 
@@ -347,13 +359,16 @@ const Register = () => {
             className="auth-input"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setSignupSuccessMessage(null);
+            }}
             placeholder="Email"
             autoComplete="email"
             required
           />
 
-          <div style={passwordFieldStyle}>
+          <div style={passwordRowStyle}>
             <input
               className="auth-input"
               style={passwordInputStyle}
@@ -362,11 +377,20 @@ const Register = () => {
               onChange={(e) => {
                 setPassword(e.target.value);
                 setPasswordGeneratedMessage(null);
+                setSignupSuccessMessage(null);
               }}
               placeholder="Password"
               autoComplete="new-password"
               required
             />
+            <button
+              className="auth-button auth-strong-button"
+              type="button"
+              onClick={generateStrongPassword}
+              title="Generate a secure password"
+            >
+              Strong
+            </button>
             <button
               type="button"
               style={passwordToggleStyle}
@@ -378,13 +402,16 @@ const Register = () => {
             </button>
           </div>
 
-          <div style={passwordFieldStyle}>
+          <div style={passwordRowStyle}>
             <input
               className="auth-input"
               style={passwordInputStyle}
               type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setSignupSuccessMessage(null);
+              }}
               placeholder="Confirm password"
               autoComplete="new-password"
               required
@@ -406,14 +433,6 @@ const Register = () => {
             </p>
           )}
 
-          <button
-            type="button"
-            style={generatePasswordButtonStyle}
-            onClick={generateStrongPassword}
-          >
-            Generate Strong Password
-          </button>
-
           {passwordGeneratedMessage && (
             <p className="auth-message" style={helperTextStyle}>
               {passwordGeneratedMessage}
@@ -422,17 +441,28 @@ const Register = () => {
 
           <div style={passwordRulesStyle}>
             <strong>Password requirements</strong>
-            <p style={passwordRuleStyle(passwordRules.length)}>At least 8 characters</p>
-            <p style={passwordRuleStyle(passwordRules.uppercase)}>One uppercase letter</p>
-            <p style={passwordRuleStyle(passwordRules.lowercase)}>One lowercase letter</p>
-            <p style={passwordRuleStyle(passwordRules.number)}>One number</p>
-            <p style={passwordRuleStyle(passwordRules.special)}>One special character</p>
+            <p style={passwordRuleStyle(passwordRules.length, submitAttempted)}>
+              At least 8 characters
+            </p>
+            <p style={passwordRuleStyle(passwordRules.uppercase, submitAttempted)}>
+              One uppercase letter
+            </p>
+            <p style={passwordRuleStyle(passwordRules.lowercase, submitAttempted)}>
+              One lowercase letter
+            </p>
+            <p style={passwordRuleStyle(passwordRules.number, submitAttempted)}>One number</p>
+            <p style={passwordRuleStyle(passwordRules.special, submitAttempted)}>
+              One special character
+            </p>
           </div>
 
           <select
             className="auth-input"
             value={role}
-            onChange={(e) => setRole(e.target.value as 'parent' | 'child')}
+            onChange={(e) => {
+              setRole(e.target.value as 'parent' | 'child');
+              setSignupSuccessMessage(null);
+            }}
           >
             <option value="parent">Parent</option>
             <option value="child">Child</option>
@@ -440,9 +470,11 @@ const Register = () => {
 
           <div style={captchaContainerStyle} ref={turnstileContainerRef} />
 
-          <button className="auth-button" type="submit" disabled={loading || !formReady}>
+          <button className="auth-button" type="submit" disabled={loading}>
             Sign Up
           </button>
+
+          {signupSuccessMessage && <p style={successMessageStyle}>{signupSuccessMessage}</p>}
         </form>
 
         <p className="auth-footer">

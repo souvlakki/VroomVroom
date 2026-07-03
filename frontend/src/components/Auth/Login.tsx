@@ -161,7 +161,7 @@ const Login = () => {
           </button>
 
           <button
-            className="auth-button secondary"
+            className="auth-button auth-google-button"
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading}
