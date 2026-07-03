@@ -7,6 +7,7 @@ import Login from './components/Auth/Login';
 import ForgotPassword from './components/Auth/ForgotPassword';
 import Profile from './components/Auth/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
+import EventsPage from './components/Events/EventsPage';
 import { useAuthStore } from './stores/authStore';
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/events" element={<EventsPage />} />
       </Routes>
     </BrowserRouter>
   );
