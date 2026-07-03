@@ -1,34 +1,35 @@
-﻿// src/components/Events/EventsPage.tsx
-
-
+﻿
 const EventsPage = () => {
   const events = [
     {
-      title: "VroomVroom Race",
+      title: "Soccer Practice",
       date: new Date("2023-10-05T14:00:00Z"),
       time: "14:00",
       location: "City Park",
-      team: "Red Team",
+      organization: "Parent Soccer Club",
       status: "Upcoming",
-      hint: "Join us for an exciting race!"
+      hint: "Join us for an exciting soccer practice!",
+      urgency: "Upcoming"
     },
     {
-      title: "VroomVroom Workshop",
+      title: "Hockey Game",
       date: new Date("2023-10-10T15:00:00Z"),
       time: "15:00",
       location: "Convention Center",
-      team: "Blue Team",
+      organization: "Parent Hockey Association",
       status: "Upcoming",
-      hint: "Learn about the latest VroomVroom technology!"
+      hint: "Watch your child play in a thrilling hockey game!",
+      urgency: "Tomorrow"
     },
     {
-      title: "VroomVroom Festival",
+      title: "School Field Trip",
       date: new Date("2023-10-15T16:00:00Z"),
       time: "16:00",
       location: "City Square",
-      team: "Green Team",
+      organization: "Parent School Board",
       status: "Upcoming",
-      hint: "Enjoy a day of fun and games!"
+      hint: "Enjoy a day of fun and learning with your child!",
+      urgency: "Today"
     }
   ];
 
@@ -41,9 +42,12 @@ const EventsPage = () => {
             <h2>{event.title}</h2>
             <p>Date: {event.date.toLocaleDateString()} at {event.time}</p>
             <p>Location: {event.location}</p>
-            <p>Team/Group: {event.team}</p>
-            <p>Status: {event.status}</p>
+            <p>Organization/Team/Group: {event.organization}</p>
+            <span className={`status-badge ${event.status.toLowerCase()}`}>{event.status}</span>
             <p>Hint: {event.hint}</p>
+            <p style={{ color: event.urgency === 'Today' ? 'red' : (event.urgency === 'Tomorrow' ? 'orange' : 'green') }}>
+              Urgency: {event.urgency}
+            </p>
           </li>
         ))}
       </ul>
