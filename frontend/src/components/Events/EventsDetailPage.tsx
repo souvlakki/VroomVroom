@@ -61,6 +61,12 @@ const EventsDetailPage = () => {
   }, [storageKey]);
 
   const saveResponse = (option: string) => {
+    if (response === option) {
+      localStorage.removeItem(storageKey);
+      setResponse(null);
+      return;
+    }
+
     localStorage.setItem(storageKey, option);
     setResponse(option);
   };
@@ -101,3 +107,4 @@ const EventsDetailPage = () => {
 };
 
 export default EventsDetailPage;
+
