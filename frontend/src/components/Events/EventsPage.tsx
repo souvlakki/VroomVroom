@@ -1,86 +1,123 @@
-﻿const EventsPage = () => {
-  const events = [
-    {
-      title: "Soccer Practice",
-      date: new Date("2024-12-15T18:30:00Z"),
-      time: "18:30",
-      location: "City Park Field A",
-      organization: "Parent Soccer Club",
-      status: "Upcoming",
-      hint: "Carpool planning needed - 4 passengers confirmed, need 2 more drivers for pickup coordination.",
-      urgency: "Today"
-    },
-    {
-      title: "Hockey Game",
-      date: new Date("2025-01-08T19:00:00Z"),
-      time: "19:00",
-      location: "Convention Center Arena 3",
-      organization: "Parent Hockey Association",
-      status: "Upcoming",
-      hint: "Driver assignment required - main driver confirmed, need backup for passenger count of 8.",
-      urgency: "Tomorrow"
-    },
-    {
-      title: "School Field Trip",
-      date: new Date("2025-01-20T14:30:00Z"),
-      time: "14:30",
-      location: "City Square Museum",
-      organization: "Parent School Board",
-      status: "Upcoming",
-      hint: "Pickup coordination needed - 6 families confirmed, arrange staggered pickup times.",
-      urgency: "Today"
-    }
-  ];
+﻿const events = [
+  {
+    title: 'Soccer Practice',
+    urgency: 'Today',
+    dateTime: 'September 14, 2026 at 18:30',
+    location: 'City Park Field A',
+    group: 'Parent Soccer Club',
+    rideStatus: 'Carpool planning needed',
+    rideHint: '4 passengers confirmed. Assign one driver and confirm two pickup locations.',
+  },
+  {
+    title: 'Hockey Game',
+    urgency: 'Tomorrow',
+    dateTime: 'September 15, 2026 at 19:00',
+    location: 'Convention Centre Arena 3',
+    group: 'Parent Hockey Association',
+    rideStatus: 'Driver assignment required',
+    rideHint: 'Main driver confirmed. Backup driver needed for a passenger count of 8.',
+  },
+  {
+    title: 'School Field Trip',
+    urgency: 'Upcoming',
+    dateTime: 'September 22, 2026 at 14:30',
+    location: 'City Square Museum',
+    group: 'Parent School Board',
+    rideStatus: 'Pickup coordination needed',
+    rideHint: '6 families confirmed. Arrange staggered pickup times and confirm final passenger count.',
+  },
+];
 
+const pageStyle = {
+  maxWidth: '900px',
+  margin: '0 auto',
+  padding: '32px 20px',
+  fontFamily: 'Arial, sans-serif',
+} as const;
+
+const introStyle = {
+  color: '#4b5563',
+  marginBottom: '24px',
+  lineHeight: 1.5,
+} as const;
+
+const listStyle = {
+  display: 'grid',
+  gap: '18px',
+} as const;
+
+const cardStyle = {
+  border: '1px solid #d7dce3',
+  borderRadius: '12px',
+  padding: '20px',
+  background: '#ffffff',
+  boxShadow: '0 2px 8px rgba(15, 23, 42, 0.06)',
+} as const;
+
+const badgeStyle = (urgency: string) =>
+  ({
+    display: 'inline-block',
+    padding: '4px 10px',
+    borderRadius: '999px',
+    fontSize: '0.85rem',
+    fontWeight: 700,
+    background: urgency === 'Today' ? '#ffe4e6' : urgency === 'Tomorrow' ? '#fef3c7' : '#e0f2fe',
+    color: urgency === 'Today' ? '#be123c' : urgency === 'Tomorrow' ? '#92400e' : '#075985',
+    marginBottom: '12px',
+  }) as const;
+
+const rowStyle = {
+  margin: '7px 0',
+  color: '#1f2937',
+} as const;
+
+const labelStyle = {
+  fontWeight: 700,
+} as const;
+
+const rideBoxStyle = {
+  marginTop: '14px',
+  padding: '12px',
+  borderRadius: '10px',
+  background: '#eef6ff',
+  border: '1px solid #cfe3ff',
+} as const;
+
+const rideTitleStyle = {
+  color: '#1d4ed8',
+  fontWeight: 800,
+  marginBottom: '4px',
+} as const;
+
+const EventsPage = () => {
   return (
-    <div className="events-page">
+    <main style={pageStyle}>
       <h1>Upcoming Events</h1>
-      {events.map((event) => (
-        <div key={event.title} style={{ 
-          border: '1px solid #ddd', 
-          borderRadius: '8px', 
-          padding: '20px', 
-          marginBottom: '16px',
-          backgroundColor: '#fff'
-        }}>
-          <h2 style={{ margin: '0 0 12px 0', color: '#333' }}>{event.title}</h2>
-          
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-            <span 
-              className={`status-badge ${event.status.toLowerCase()}`} 
-              style={{ 
-                backgroundColor: event.urgency === 'Today' ? '#ffcccc' : (event.urgency === 'Tomorrow' ? '#fff3cd' : '#d4edda'),
-                color: event.urgency === 'Today' ? '#dc3545' : (event.urgency === 'Tomorrow' ? '#856404' : '#155724'),
-                padding: '4px 12px', 
-                borderRadius: '4px',
-                fontSize: '12px',
-                fontWeight: 'bold'
-              }}
-            >
-              {event.urgency}
-            </span>
-          </div>
-
-          <p style={{ margin: '8px 0', color: '#666' }}>ðŸ“… Date/Time: {event.date.toLocaleDateString()} at {event.time}</p>
-          
-          <p style={{ margin: '8px 0', color: '#555' }}>ðŸ“ Location: {event.location}</p>
-          
-          <p style={{ margin: '8px 0', color: '#444' }}>ðŸ¢ Organization/Team/Group: {event.organization}</p>
-          
-          <div 
-            style={{ 
-              backgroundColor: event.status === "Upcoming" ? "#e7f3ff" : "#fff",
-              padding: '12px', 
-              borderRadius: '6px',
-              marginTop: '8px'
-            }}
-          >
-            <p style={{ margin: 0, color: '#0056b3', fontWeight: 'bold' }}>ðŸš— Ride Status:</p>
-            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#333' }}>{event.hint}</p>
-          </div>
-        </div>
-      ))}
-    </div>
+      <p style={introStyle}>
+        Plan around the event first, then confirm drivers, passengers, pickup timing, and ride capacity.
+      </p>
+      <section style={listStyle}>
+        {events.map((event) => (
+          <article key={event.title} style={cardStyle}>
+            <h2>{event.title}</h2>
+            <span style={badgeStyle(event.urgency)}>{event.urgency}</span>
+            <p style={rowStyle}>
+              <span style={labelStyle}>Date/Time:</span> {event.dateTime}
+            </p>
+            <p style={rowStyle}>
+              <span style={labelStyle}>Location:</span> {event.location}
+            </p>
+            <p style={rowStyle}>
+              <span style={labelStyle}>Organization/Team/Group:</span> {event.group}
+            </p>
+            <div style={rideBoxStyle}>
+              <div style={rideTitleStyle}>Ride Status: {event.rideStatus}</div>
+              <div>{event.rideHint}</div>
+            </div>
+          </article>
+        ))}
+      </section>
+    </main>
   );
 };
 
