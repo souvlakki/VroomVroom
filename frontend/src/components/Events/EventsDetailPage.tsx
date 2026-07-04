@@ -1,4 +1,5 @@
-﻿import { Link, useParams } from 'react-router-dom';
+﻿import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 const events = [
   {
@@ -42,10 +43,15 @@ const rowStyle = { margin: '10px 0', color: '#1f2937' } as const;
 const labelStyle = { fontWeight: 700 } as const;
 const backLinkStyle = { display: 'inline-block', marginBottom: '18px', color: '#2563eb', fontWeight: 700 } as const;
 const rideBoxStyle = { marginTop: '18px', padding: '14px', borderRadius: '10px', background: '#eef6ff', border: '1px solid #cfe3ff' } as const;
+const rsvpBoxStyle = { marginTop: '18px', padding: '14px', borderRadius: '10px', background: '#f8fafc', border: '1px solid #d7dce3' } as const;
+const buttonRowStyle = { display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '12px' } as const;
+const buttonStyle = (active: boolean) => ({ padding: '10px 14px', borderRadius: '8px', border: active ? '2px solid #2563eb' : '1px solid #cbd5e1', background: active ? '#eff6ff' : '#ffffff', color: active ? '#1d4ed8' : '#1f2937', fontWeight: 700, cursor: 'pointer' }) as const;
+const confirmationStyle = { marginTop: '12px', color: '#166534', fontWeight: 700 } as const;
 
 const EventsDetailPage = () => {
   const { eventId } = useParams();
   const event = events.find((item) => item.id === eventId) ?? events[0];
+  const [response, setResponse] = useState<string | null>(null);
 
   return (
     <main style={pageStyle}>
@@ -55,12 +61,26 @@ const EventsDetailPage = () => {
         <p style={rowStyle}><span style={labelStyle}>Date/Time:</span> {event.dateTime}</p>
         <p style={rowStyle}><span style={labelStyle}>Location:</span> {event.location}</p>
         <p style={rowStyle}><span style={labelStyle}>Organization/Team/Group:</span> {event.group}</p>
+
         <div style={rideBoxStyle}>
           <h2>Ride Planning</h2>
           <p style={rowStyle}><span style={labelStyle}>Ride Status:</span> {event.rideStatus}</p>
           <p style={rowStyle}><span style={labelStyle}>Passenger Count:</span> {event.passengerCount}</p>
           <p style={rowStyle}><span style={labelStyle}>Driver Status:</span> {event.driverStatus}</p>
           <p style={rowStyle}><span style={labelStyle}>Pickup Notes:</span> {event.pickupNotes}</p>
+        </div>
+
+        <div style={rsvpBoxStyle}>
+          <h2>Your Response</h2>
+          <p style={rowStyle}>Choose a simple mock response for this event. This does not save to Supabase yet.</p>
+          <div style={buttonRowStyle}>
+            {['Attending', 'Not attending', 'Need a ride', 'Can drive'].map((option) => (
+              <button key={option} type="button" style={buttonStyle(response === option)} onClick={() => setResponse(option)}>
+                {option}
+              </button>
+            ))}
+          </div>
+          {response && <p style={confirmationStyle}>Selected: {response}</p>}
         </div>
       </section>
     </main>
