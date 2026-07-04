@@ -1,4 +1,4 @@
-const EventsPage = () => {
+﻿const EventsPage = () => {
   const events = [
     {
       title: "Soccer Practice",
@@ -61,11 +61,11 @@ const EventsPage = () => {
             </span>
           </div>
 
-          <p style={{ margin: '8px 0', color: '#666' }}>📅 Date/Time: {event.date.toLocaleDateString()} at {event.time}</p>
+          <p style={{ margin: '8px 0', color: '#666' }}>ðŸ“… Date/Time: {event.date.toLocaleDateString()} at {event.time}</p>
           
-          <p style={{ margin: '8px 0', color: '#555' }}>📍 Location: {event.location}</p>
+          <p style={{ margin: '8px 0', color: '#555' }}>ðŸ“ Location: {event.location}</p>
           
-          <p style={{ margin: '8px 0', color: '#444' }}>🏢 Organization/Team/Group: {event.organization}</p>
+          <p style={{ margin: '8px 0', color: '#444' }}>ðŸ¢ Organization/Team/Group: {event.organization}</p>
           
           <div 
             style={{ 
@@ -75,7 +75,7 @@ const EventsPage = () => {
               marginTop: '8px'
             }}
           >
-            <p style={{ margin: 0, color: '#0056b3', fontWeight: 'bold' }}>🚗 Ride Status:</p>
+            <p style={{ margin: 0, color: '#0056b3', fontWeight: 'bold' }}>ðŸš— Ride Status:</p>
             <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#333' }}>{event.hint}</p>
           </div>
         </div>
