@@ -1,4 +1,5 @@
-﻿import { Link } from 'react-router-dom';
+﻿import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const events = [
   {
@@ -42,9 +43,21 @@ const rowStyle = { margin: '7px 0', color: '#1f2937' } as const;
 const labelStyle = { fontWeight: 700 } as const;
 const rideBoxStyle = { marginTop: '14px', padding: '12px', borderRadius: '10px', background: '#eef6ff', border: '1px solid #cfe3ff' } as const;
 const rideTitleStyle = { color: '#1d4ed8', fontWeight: 800, marginBottom: '4px' } as const;
+const responseStyle = { marginTop: '12px', padding: '10px 12px', borderRadius: '10px', background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#166534', fontWeight: 700 } as const;
 const linkHintStyle = { marginTop: '12px', color: '#2563eb', fontWeight: 700 } as const;
 
 const EventsPage = () => {
+  const [responses, setResponses] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const savedResponses = events.reduce<Record<string, string>>((acc, event) => {
+      const saved = localStorage.getItem(`vroomvroom-event-response-${event.id}`);
+      if (saved) acc[event.id] = saved;
+      return acc;
+    }, {});
+    setResponses(savedResponses);
+  }, []);
+
   return (
     <main style={pageStyle}>
       <h1>Upcoming Events</h1>
@@ -62,6 +75,7 @@ const EventsPage = () => {
                 <div style={rideTitleStyle}>Ride Status: {event.rideStatus}</div>
                 <div>{event.rideHint}</div>
               </div>
+              {responses[event.id] && <div style={responseStyle}>Your Response: {responses[event.id]}</div>}
               <div style={linkHintStyle}>View event details</div>
             </article>
           </Link>
