@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 const events = [
@@ -47,11 +47,23 @@ const rsvpBoxStyle = { marginTop: '18px', padding: '14px', borderRadius: '10px',
 const buttonRowStyle = { display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '12px' } as const;
 const buttonStyle = (active: boolean) => ({ padding: '10px 14px', borderRadius: '8px', border: active ? '2px solid #2563eb' : '1px solid #cbd5e1', background: active ? '#eff6ff' : '#ffffff', color: active ? '#1d4ed8' : '#1f2937', fontWeight: 700, cursor: 'pointer' }) as const;
 const confirmationStyle = { marginTop: '12px', color: '#166534', fontWeight: 700 } as const;
+const savedNoteStyle = { marginTop: '8px', color: '#4b5563', fontSize: '0.9rem' } as const;
 
 const EventsDetailPage = () => {
   const { eventId } = useParams();
   const event = events.find((item) => item.id === eventId) ?? events[0];
-  const [response, setResponse] = useState<string | null>(null);
+  const storageKey = `vroomvroom-event-response-${event.id}`;
+  const [response, setResponse] = useState<string | null>(() => localStorage.getItem(storageKey));
+
+  useEffect(() => {
+    const savedResponse = localStorage.getItem(storageKey);
+    setResponse(savedResponse);
+  }, [storageKey]);
+
+  const saveResponse = (option: string) => {
+    localStorage.setItem(storageKey, option);
+    setResponse(option);
+  };
 
   return (
     <main style={pageStyle}>
@@ -72,15 +84,16 @@ const EventsDetailPage = () => {
 
         <div style={rsvpBoxStyle}>
           <h2>Your Response</h2>
-          <p style={rowStyle}>Choose a simple mock response for this event. This does not save to Supabase yet.</p>
+          <p style={rowStyle}>Choose your response for this event. For now, this is saved locally in your browser only.</p>
           <div style={buttonRowStyle}>
             {['Attending', 'Not attending', 'Need a ride', 'Can drive'].map((option) => (
-              <button key={option} type="button" style={buttonStyle(response === option)} onClick={() => setResponse(option)}>
+              <button key={option} type="button" style={buttonStyle(response === option)} onClick={() => saveResponse(option)}>
                 {option}
               </button>
             ))}
           </div>
           {response && <p style={confirmationStyle}>Selected: {response}</p>}
+          {response && <p style={savedNoteStyle}>Saved locally for this mock event. Supabase saving will come later.</p>}
         </div>
       </section>
     </main>
