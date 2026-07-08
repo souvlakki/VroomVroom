@@ -1,11 +1,14 @@
 // src/services/authService.ts
 
-import type { AuthError } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabaseClient';
 
 const getErrorMessage = (error: unknown, fallback: string) => {
   if (error instanceof Error) return error.message;
   return fallback;
+};
+
+const getAppRedirectUrl = (path = '/profile') => {
+  return `${window.location.origin}${path}`;
 };
 
 export const signUp = async (
@@ -15,24 +18,25 @@ export const signUp = async (
   captchaToken: string
 ) => {
   try {
-    const { error: authError } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         captchaToken,
+        emailRedirectTo: getAppRedirectUrl('/profile'),
         data: {
           role,
         },
       },
     });
 
-    if (authError) throw authError;
+    if (error) throw error;
 
-    return { success: true };
+    return { success: true, user: data.user, session: data.session };
   } catch (error) {
     return {
       success: false,
-      error: getErrorMessage(error as AuthError, 'Signup failed'),
+      error: getErrorMessage(error, 'Signup failed'),
     };
   }
 };
@@ -50,17 +54,19 @@ export const signIn = async (email: string, password: string) => {
   } catch (error) {
     return {
       success: false,
-      error: getErrorMessage(error as AuthError, 'Sign in failed'),
+      error: getErrorMessage(error, 'Sign in failed'),
     };
   }
 };
 
 export const signInWithGoogle = async () => {
   try {
+    const redirectTo = getAppRedirectUrl('/profile');
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/profile`,
+        redirectTo,
       },
     });
 
@@ -85,14 +91,16 @@ export const signOut = async () => {
   } catch (error) {
     return {
       success: false,
-      error: getErrorMessage(error as AuthError, 'Sign out failed'),
+      error: getErrorMessage(error, 'Sign out failed'),
     };
   }
 };
 
 export const forgotPassword = async (email: string) => {
   try {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: getAppRedirectUrl('/profile'),
+    });
 
     if (error) throw error;
 
@@ -100,7 +108,7 @@ export const forgotPassword = async (email: string) => {
   } catch (error) {
     return {
       success: false,
-      error: getErrorMessage(error as AuthError, 'Password reset failed'),
+      error: getErrorMessage(error, 'Password reset failed'),
     };
   }
 };

@@ -10,7 +10,12 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const user = useAuthStore((state) => state.user);
+  const loading = useAuthStore((state) => state.loading);
   const location = useLocation();
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;

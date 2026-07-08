@@ -1,4 +1,4 @@
-﻿// src/App.tsx
+// src/App.tsx
 
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -33,7 +33,8 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/events" element={<EventsPage />} />`r`n        <Route path="/events/:eventId" element={<EventsDetailPage />} />
+        <Route path="/events" element={<EventsPage />} />
+        <Route path="/events/:eventId" element={<EventsDetailPage />} />
       </Routes>
     </BrowserRouter>
   );

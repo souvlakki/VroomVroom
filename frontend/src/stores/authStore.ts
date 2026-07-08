@@ -1,7 +1,7 @@
 // src/stores/authStore.ts
 
 import { create } from 'zustand';
-import type { User } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabaseClient';
 import {
   signIn,
@@ -33,23 +33,43 @@ const getErrorMessage = (error: unknown, fallback: string) => {
   return fallback;
 };
 
+type SetAuthState = (state: Partial<AuthState>) => void;
+
+let authStateListenerInitialized = false;
+
+const syncUserFromSession = (set: SetAuthState, session: Session | null) => {
+  set({
+    user: session?.user ?? null,
+    loading: false,
+    error: null,
+  });
+};
+
+const subscribeToAuthChanges = (set: SetAuthState) => {
+  if (authStateListenerInitialized) return;
+
+  authStateListenerInitialized = true;
+
+  supabase.auth.onAuthStateChange((_event, session) => {
+    syncUserFromSession(set, session);
+  });
+};
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  loading: false,
+  loading: true,
   error: null,
 
   initializeSession: async () => {
     set({ loading: true, error: null });
+    subscribeToAuthChanges(set);
 
     try {
       const { data, error } = await supabase.auth.getSession();
 
       if (error) throw error;
 
-      set({
-        user: data.session?.user ?? null,
-        loading: false,
-      });
+      syncUserFromSession(set, data.session);
     } catch (error) {
       set({
         user: null,
